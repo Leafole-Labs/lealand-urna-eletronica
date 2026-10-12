@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-11T06:00:00",
+  "scenarios": [
+    {
+      "id": "lealand-oficial",
+      "scenario": "lealand",
+      "label": "Eleição de Lealand — Gerente (oficial)",
+      "description": "Mídia oficial de Lealand: fase oficial do motor (sem TREINAMENTO).",
+      "fase": "of",
+      "pe": 2400,
+      "uf": "ac",
+      "turno": 2,
+      "municipio": 1,
+      "zona": 1,
+      "secao": 1,
+      "aliases": [
+        { "source": "/dsk/fi/estatico", "target": "/dsk/fe/estatico" },
+        { "source": "/dsk/fi/serialv.dat", "target": "/dsk/fe/serialv.dat" }
+      ],
+      "data": "lealand-oficial.data",
+      "dataJs": "lealand-oficial.data.js"
+    }
+  ]
+}
