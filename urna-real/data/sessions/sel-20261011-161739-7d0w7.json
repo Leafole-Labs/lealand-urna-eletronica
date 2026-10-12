@@ -1,0 +1,87 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-161739-7d0w7",
+  "inicio": "2026-10-11T19:17:39.293Z",
+  "fim": null,
+  "estado": "VOTING",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 1,
+  "mesario": {
+    "nome": "Mesaria Teste da Silva",
+    "matricula": "SEL-TESTE-0001",
+    "registradoEm": "2026-10-11T19:18:37.058Z"
+  },
+  "votos": [],
+  "eventos": [
+    {
+      "t": "2026-10-11T19:17:42.233Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:17:42.234Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:30.368Z",
+      "tipo": "TESTE_TECLADO",
+      "detalhe": "13 teclas detectadas pela cadeia real (0,1,2,3,4,5,6,7,8,9,B,D,C).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:30.369Z",
+      "tipo": "ESTADO",
+      "detalhe": "KEYBOARD_TEST → PREPARING (teclado OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:30.370Z",
+      "tipo": "ESTADO",
+      "detalhe": "PREPARING → WAITING_FOR_POLL_WORKER (pronta para parear)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:36.206Z",
+      "tipo": "PAREAMENTO",
+      "detalhe": "Terminal do mesário pareado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:37.058Z",
+      "tipo": "REGISTRO_MESARIO",
+      "detalhe": "Mesaria Teste da Silva (SEL-TESTE-0001).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:37.058Z",
+      "tipo": "ESTADO",
+      "detalhe": "WAITING_FOR_POLL_WORKER → READY (mesário registrado)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:38.567Z",
+      "tipo": "HABILITACAO",
+      "detalhe": "Eleitor nº 1 habilitado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:38.568Z",
+      "tipo": "ESTADO",
+      "detalhe": "READY → VOTER_AUTHORIZED (eleitor 1)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:18:39.234Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTER_AUTHORIZED → VOTING (eleitor 1)",
+      "vis": "publico"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

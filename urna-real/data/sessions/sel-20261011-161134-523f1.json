@@ -1,0 +1,29 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-161134-523f1",
+  "inicio": "2026-10-11T19:11:34.016Z",
+  "fim": null,
+  "estado": "KEYBOARD_TEST",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 0,
+  "mesario": null,
+  "votos": [],
+  "eventos": [
+    {
+      "t": "2026-10-11T19:11:36.966Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:11:36.967Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

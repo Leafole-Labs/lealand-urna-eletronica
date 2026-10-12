@@ -1,0 +1,47 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-160923-72y8m",
+  "inicio": "2026-10-11T19:09:23.781Z",
+  "fim": null,
+  "estado": "WAITING_FOR_POLL_WORKER",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 0,
+  "mesario": null,
+  "votos": [],
+  "eventos": [
+    {
+      "t": "2026-10-11T19:09:26.703Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:09:26.704Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:09:51.905Z",
+      "tipo": "TESTE_TECLADO",
+      "detalhe": "13 teclas detectadas pela cadeia real (0,1,2,3,4,5,6,7,8,9,C,D,B).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:09:51.906Z",
+      "tipo": "ESTADO",
+      "detalhe": "KEYBOARD_TEST → PREPARING (teclado OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:09:51.907Z",
+      "tipo": "ESTADO",
+      "detalhe": "PREPARING → WAITING_FOR_POLL_WORKER (pronta para parear)",
+      "vis": "publico"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

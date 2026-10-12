@@ -1,0 +1,62 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-143909-7888k",
+  "inicio": "2026-10-11T17:39:09.434Z",
+  "fim": null,
+  "estado": "WAITING_FOR_POLL_WORKER",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 0,
+  "mesario": null,
+  "votos": [
+    {
+      "seq": 1,
+      "clientVoteId": "sel-20261011-143909-7888k-mv446rgp-3n1tl",
+      "cargo": "Gerente",
+      "tipo": "nulo",
+      "numero": "00",
+      "registradoEm": "2026-10-11T17:46:01.225Z"
+    }
+  ],
+  "eventos": [
+    {
+      "t": "2026-10-11T17:39:31.486Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T17:39:31.487Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T17:39:55.992Z",
+      "tipo": "TESTE_TECLADO",
+      "detalhe": "13 teclas detectadas pela cadeia real (C,D,B,9,8,7,6,5,4,3,2,1,0).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T17:39:55.993Z",
+      "tipo": "ESTADO",
+      "detalhe": "KEYBOARD_TEST → PREPARING (teclado OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T17:39:55.993Z",
+      "tipo": "ESTADO",
+      "detalhe": "PREPARING → WAITING_FOR_POLL_WORKER (pronta para parear)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T17:46:11.539Z",
+      "tipo": "VOTO",
+      "detalhe": "seq 1 (sincronizado).",
+      "vis": "sigiloso"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

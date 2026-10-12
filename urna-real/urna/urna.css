@@ -1,0 +1,239 @@
+/* UENUX Screen da urna real de Lealand: somente a tela + identidade SEL.
+   Sem teclado visual/virtual, sem botões, sem painel de teclas. */
+:root {
+  color-scheme: dark;
+  --sel-fundo: #10160f;
+  --sel-verde: #1d4620;
+  --sel-claro: #e9efe6;
+  --sel-texto: #f2f5f0;
+  --sel-suave: #9db3a0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, "Inter", sans-serif;
+  color: var(--sel-texto);
+  background: var(--sel-fundo);
+}
+
+.urna-real-topo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 4px solid var(--sel-verde);
+}
+
+.urna-real-topo img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.urna-real-titulos {
+  display: grid;
+  gap: 2px;
+}
+
+.urna-real-titulos strong {
+  font-size: 1.05rem;
+  color: var(--sel-verde);
+}
+
+.urna-real-titulos span {
+  font-size: 0.85rem;
+  color: #4a5548;
+}
+
+.urna-real-sessao {
+  margin: 0;
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  color: var(--sel-suave);
+  background: #0b0f0a;
+  border-bottom: 1px solid #22301f;
+  overflow-wrap: anywhere;
+}
+
+.urna-real-etapa {
+  padding: 10px 20px 0;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.urna-real-estado-linha {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--sel-claro);
+  text-align: center;
+}
+
+.urna-real-dica {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--sel-suave);
+  text-align: center;
+}
+
+.urna-real-kbgrade {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  width: min(640px, 100%);
+}
+
+.urna-real-kbtecla {
+  display: grid;
+  place-items: center;
+  min-height: 48px;
+  border: 2px solid #3a4a37;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--sel-suave);
+  background: #161d15;
+}
+
+.urna-real-kbtecla.ok {
+  border-color: #7fbf7f;
+  color: #c9f0c9;
+  background: #1d2b1c;
+}
+
+.urna-real-pareamento {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  background: #fff;
+  color: #1a1a1a;
+  border-radius: 10px;
+  padding: 18px 28px;
+}
+
+.urna-real-pareamento-titulo {
+  font-weight: 700;
+  color: var(--sel-verde);
+}
+
+.urna-real-pareamento-codigo {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 0.5rem;
+  color: var(--sel-verde);
+  font-variant-numeric: tabular-nums;
+}
+
+.urna-real-pareamento-exp {
+  font-size: 0.85rem;
+  color: #4a5548;
+}
+
+.apuracao-checks {
+  width: min(640px, 100%);
+  margin: 0;
+  padding: 10px 10px 10px 28px;
+  background: #161d15;
+  border: 1px solid #3a4a37;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.apuracao-checks li.ok {
+  color: #c9f0c9;
+}
+
+.apuracao-checks li.falha {
+  color: #f0a8a8;
+  font-weight: 700;
+}
+
+.urna-real-palco {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  min-height: 0;
+}
+
+#uenux-screen {
+  width: min(100%, calc((100vh - 260px) * 1.6));
+  max-width: 1280px;
+  height: auto;
+  aspect-ratio: 8 / 5;
+  display: block;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 0 0 2px #2c3a29, 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* Quadro isolado do motor (motor.html): ocupa o mesmo espaço do canvas
+   original, com a mesma regra responsiva. */
+#urna-real-motor {
+  width: min(100%, calc((100vh - 260px) * 1.6));
+  max-width: 1280px;
+  aspect-ratio: 8 / 5;
+  margin: 0 auto;
+}
+
+#urna-real-motor iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Camada de GIFs do motor (intérprete de Libras): nunca exibida em Lealand.
+   Fotos dos candidatos são JPEG desenhados no canvas. */
+#uenux-gif-layer {
+  display: none !important;
+}
+
+.urna-real-rodape {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: #fff;
+  border-top: 4px solid var(--sel-verde);
+  color: #4a5548;
+  font-size: 0.82rem;
+}
+
+.urna-real-rodape img {
+  width: 40px;
+  height: auto;
+}
+
+.urna-real-carregando {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 22, 15, 0.92);
+  color: var(--sel-texto);
+  font-size: 1.1rem;
+  z-index: 10;
+}
+
+@media (max-width: 640px) {
+  .urna-real-kbgrade {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .urna-real-pareamento-codigo {
+    font-size: 2.2rem;
+  }
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<!-- Terminal do mesário (pacote urna-real/): equipamento SEPARADO da urna.
+     Controla o FLUXO (parear, registrar, habilitar, encerrar) — nunca o
+     conteúdo do voto. Fala com o servidor local via WebSocket (sel-ws/1). -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Terminal do Mesário — Supremo Eleitoral de Lealand</title>
+  <link rel="icon" href="../shared/brand/brand-coat.png">
+  <link rel="stylesheet" href="mesario.css?v=sel-mesario-1">
+  <script type="module" src="mesario.js?v=sel-mesario-1"></script>
+</head>
+<body>
+  <header class="mesario-topo">
+    <img src="../shared/brand/brand-coat.png" alt="Brasão de Lealand">
+    <div>
+      <strong>Supremo Eleitoral de Lealand</strong>
+      <span>Terminal do Mesário — urna-real</span>
+    </div>
+    <span id="mesario-conexao" class="mesario-conexao" role="status">desconectado</span>
+  </header>
+
+  <main class="mesario-grade">
+    <section class="mesario-painel" aria-label="Sessão">
+      <h2>Sessão</h2>
+      <dl class="mesario-dados">
+        <dt>Estado</dt><dd id="m-estado">—</dd>
+        <dt>Sessão</dt><dd id="m-sessao">—</dd>
+        <dt>Urna</dt><dd id="m-urna">—</dd>
+        <dt>Mesário</dt><dd id="m-mesario">—</dd>
+        <dt>Eleitor atual</dt><dd id="m-eleitor">—</dd>
+        <dt>Votos apurados</dt><dd id="m-votos">—</dd>
+      </dl>
+      <p id="m-aviso" class="mesario-aviso" role="status"></p>
+    </section>
+
+    <section class="mesario-painel" aria-label="Pareamento">
+      <h2>1 · Pareamento</h2>
+      <p class="mesario-explica">Leia o código temporário na tela da urna e informe aqui. Uso único, expira em 5 minutos.</p>
+      <label>Código de 6 dígitos
+        <input id="m-codigo" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="000000">
+      </label>
+      <button id="m-parear" type="button">Parear terminal</button>
+    </section>
+
+    <section class="mesario-painel" aria-label="Registro do mesário">
+      <h2>2 · Registro do mesário</h2>
+      <p class="mesario-explica">Identificação administrativa (use dados fictícios de teste).</p>
+      <label>Nome
+        <input id="m-nome" maxlength="60" autocomplete="off" placeholder="Ex.: Mesária Teste">
+      </label>
+      <label>Matrícula
+        <input id="m-matricula" maxlength="20" autocomplete="off" placeholder="Ex.: SEL-TESTE-0001">
+      </label>
+      <div class="mesario-linha">
+        <button id="m-registrar" type="button">Registrar</button>
+        <button id="m-ficticio" type="button">Usar identidade fictícia</button>
+      </div>
+    </section>
+
+    <section class="mesario-painel" aria-label="Eleitor">
+      <h2>3 · Eleitor</h2>
+      <p class="mesario-explica">Habilita o próximo eleitor <strong>somente</strong> com a urna em READY.</p>
+      <div class="mesario-linha">
+        <button id="m-habilitar" type="button">Habilitar eleitor (A)</button>
+      </div>
+      <p class="mesario-explica">Durante a votação o terminal mostra apenas <em>eleitor votando</em> — nunca o conteúdo do voto.</p>
+    </section>
+
+    <section class="mesario-painel" aria-label="Encerramento">
+      <h2>4 · Encerramento</h2>
+      <p class="mesario-explica">Encerra somente com a urna em READY. Gera BU, RDV, LOG e o ZIP do pendrive.</p>
+      <div class="mesario-linha">
+        <button id="m-encerrar" type="button">Encerrar sessão (E)</button>
+      </div>
+      <p><a id="m-zip" href="#" hidden>Baixar pendrive (ZIP)</a></p>
+    </section>
+
+    <section class="mesario-painel mesario-feed" aria-label="Eventos">
+      <h2>Eventos</h2>
+      <ul id="m-eventos"></ul>
+    </section>
+
+    <section class="mesario-painel" aria-label="Ajuda">
+      <h2>Ajuda — teclado</h2>
+      <ul class="mesario-ajuda">
+        <li><kbd>A</kbd> habilitar eleitor</li>
+        <li><kbd>E</kbd> encerrar sessão (pede confirmação)</li>
+        <li>Fora de campos de texto. Controles também clicáveis.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="mesario-rodape">
+    <img src="../shared/brand/brand-flag.png" alt="Bandeira de Lealand">
+    <span>Supremo Eleitoral de Lealand (SEL) — o mesário autoriza o fluxo; o voto é só da urna.</span>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-114515-9z8uo",
+  "inicio": "2026-10-11T14:45:15.993Z",
+  "fim": null,
+  "estado": "BOOT",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 0,
+  "mesario": null,
+  "votos": [],
+  "eventos": [],
+  "candidatos": {},
+  "artefatos": null
+}

@@ -1,0 +1,81 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-172902-52uw8",
+  "inicio": "2026-10-11T20:29:02.377Z",
+  "fim": null,
+  "estado": "VOTER_AUTHORIZED",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 1,
+  "mesario": {
+    "nome": "Rfonte",
+    "matricula": "SEL-!",
+    "registradoEm": "2026-10-11T20:29:49.301Z"
+  },
+  "votos": [],
+  "eventos": [
+    {
+      "t": "2026-10-11T20:29:08.242Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:29:08.242Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:29:24.284Z",
+      "tipo": "TESTE_TECLADO",
+      "detalhe": "13 teclas detectadas pela cadeia real (1,2,3,4,5,6,7,8,9,0,D,C,B).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:29:24.285Z",
+      "tipo": "ESTADO",
+      "detalhe": "KEYBOARD_TEST → PREPARING (teclado OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:29:24.287Z",
+      "tipo": "ESTADO",
+      "detalhe": "PREPARING → WAITING_FOR_POLL_WORKER (pronta para parear)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:29:41.501Z",
+      "tipo": "PAREAMENTO",
+      "detalhe": "Terminal do mesário pareado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:29:49.301Z",
+      "tipo": "REGISTRO_MESARIO",
+      "detalhe": "Rfonte (SEL-!).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:29:49.301Z",
+      "tipo": "ESTADO",
+      "detalhe": "WAITING_FOR_POLL_WORKER → READY (mesário registrado)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:30:36.209Z",
+      "tipo": "HABILITACAO",
+      "detalhe": "Eleitor nº 1 habilitado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:30:36.210Z",
+      "tipo": "ESTADO",
+      "detalhe": "READY → VOTER_AUTHORIZED (eleitor 1)",
+      "vis": "publico"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

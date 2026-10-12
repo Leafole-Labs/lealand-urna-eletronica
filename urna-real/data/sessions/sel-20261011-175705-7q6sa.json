@@ -1,0 +1,81 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-175705-7q6sa",
+  "inicio": "2026-10-11T20:57:05.924Z",
+  "fim": null,
+  "estado": "VOTER_AUTHORIZED",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 1,
+  "mesario": {
+    "nome": "Rfonte",
+    "matricula": "1234",
+    "registradoEm": "2026-10-11T20:57:58.736Z"
+  },
+  "votos": [],
+  "eventos": [
+    {
+      "t": "2026-10-11T20:57:17.089Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:57:17.090Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:57:33.700Z",
+      "tipo": "TESTE_TECLADO",
+      "detalhe": "13 teclas detectadas pela cadeia real (1,2,3,4,5,6,7,8,9,0,D,C,B).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:57:33.702Z",
+      "tipo": "ESTADO",
+      "detalhe": "KEYBOARD_TEST → PREPARING (teclado OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:57:33.703Z",
+      "tipo": "ESTADO",
+      "detalhe": "PREPARING → WAITING_FOR_POLL_WORKER (pronta para parear)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:57:47.493Z",
+      "tipo": "PAREAMENTO",
+      "detalhe": "Terminal do mesário pareado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:57:58.736Z",
+      "tipo": "REGISTRO_MESARIO",
+      "detalhe": "Rfonte (1234).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:57:58.737Z",
+      "tipo": "ESTADO",
+      "detalhe": "WAITING_FOR_POLL_WORKER → READY (mesário registrado)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:58:17.599Z",
+      "tipo": "HABILITACAO",
+      "detalhe": "Eleitor nº 1 habilitado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T20:58:17.600Z",
+      "tipo": "ESTADO",
+      "detalhe": "READY → VOTER_AUTHORIZED (eleitor 1)",
+      "vis": "publico"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

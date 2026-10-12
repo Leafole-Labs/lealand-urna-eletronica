@@ -1,0 +1,105 @@
+<!doctype html>
+<!-- Quadro do motor WASM da urna-real: instância isolada e recriável.
+     A página principal (index.html) NUNCA recarrega entre eleitores; quando
+     o motor estaciona após o FIM, este quadro é descartado e um novo é
+     criado (votaInit novo, mídia remontada). Sessão do servidor intacta. -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Motor da Urna Real de Lealand</title>
+  <style>html,body{margin:0;padding:0;background:#101510}main{display:flex;align-items:center;justify-content:center;min-height:100vh}canvas{display:block;width:100%;height:auto;aspect-ratio:8/5;background:#fff;border-radius:6px;box-shadow:0 0 0 2px #2c3a29,0 12px 40px rgba(0,0,0,.55)}#uenux-gif-layer{display:none!important}</style>
+  <script>
+    function urnaRealResolution() {
+      const fallback = { width: 1280, height: 800 };
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const text = params.get("screen") || "";
+        const match = /^(\d+)x(\d+)$/i.exec(text);
+        const width = match ? Number(match[1]) : fallback.width;
+        const height = match ? Number(match[2]) : fallback.height;
+        return width > 0 && height > 0 ? { width, height } : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    const urnaRealScreen = urnaRealResolution();
+
+    // Guarda anti-duplicação (cadeia única): o adaptador envia teclas SOMENTE
+    // via votaPressKey; o listener interno do motor empilhava tudo em
+    // uenuxKeys ("91" virava nulo). Array real com push descartado/contado.
+    const urnaRealFilaNeutra = [];
+    urnaRealFilaNeutra.push = (...teclas) => {
+      window.__selDupCount = (window.__selDupCount || 0) + teclas.length;
+      return urnaRealFilaNeutra.length;
+    };
+
+    window.Module = {
+      votaScreenWidth: urnaRealScreen.width,
+      votaScreenHeight: urnaRealScreen.height,
+      uenuxKeys: urnaRealFilaNeutra,
+      // Adaptador dono do teclado; marcador oculto (sem réplica visual).
+      uenuxExternalKeyboard: true,
+      locateFile(path) {
+        if (path.startsWith("vota_web_wasm.")) {
+          return "../wasm/" + path;
+        }
+        if (path.startsWith("rhvoice-leticia.")) {
+          return "../wasm/" + path;
+        }
+        if (path.endsWith(".data")) {
+          return "../wasm/bases/" + path;
+        }
+        return path;
+      },
+      postRun: [function () {
+        const canvas = document.getElementById("uenux-screen");
+        if (canvas) {
+          canvas.width = urnaRealScreen.width;
+          canvas.height = urnaRealScreen.height;
+        }
+        window.__motorPronto = true;
+      }]
+    };
+
+    function urnaRealLoadEngine() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "../wasm/vota_web_wasm.js";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("motor da urna indisponível"));
+        document.head.appendChild(script);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      urnaRealLoadEngine().catch((error) => {
+        document.title = "Falha no motor: " + error.message;
+      });
+    });
+  </script>
+</head>
+<body>
+  <main aria-label="Tela da urna">
+    <canvas id="uenux-screen" width="1280" height="800"></canvas>
+    <!-- Marcador não-visual p/ Module.uenuxExternalKeyboard. -->
+    <span data-vota-key="noop" hidden aria-hidden="true"></span>
+    <!-- Receptáculo exigido pelo motor (js_mt_set): nunca exibido, sem UI. -->
+    <pre id="mt" hidden aria-hidden="true"></pre>
+  </main>
+  <script>
+    // O foco do teclado pode estar neste quadro (ex.: após clicar no canvas).
+    // Encaminha toda tecla à porta única da página principal, que decide
+    // (checagem JS / voto / descarte) pelo estado da sessão.
+    document.addEventListener('keydown', function (e) {
+      try {
+        if (window.parent && typeof window.parent.__urnaRealTeclaCrua === 'function') {
+          if (window.parent.__urnaRealTeclaCrua(e.key)) e.preventDefault();
+        }
+      } catch (_) { /* página principal ainda carregando */ }
+    });
+  </script>
+  <script src="../shared/sel-sem-libras.js?v=sel-1"></script>
+</body>
+</html>

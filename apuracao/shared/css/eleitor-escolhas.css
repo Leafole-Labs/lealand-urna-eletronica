@@ -1,0 +1,425 @@
+/* Tema SEL-Lealand: azuis originais remapeados para verdes institucionais. */.barra-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  justify-content: flex-end;
+}
+
+.barra-botoes button {
+  background-color: #3d7a44;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.barra-botoes button:hover {
+  background-color: #3d7a44;
+  transform: scale(1.05);
+}
+
+.barra-botoes .btn-simular {
+  background-color: #db9736; 
+  border: 1px solid #db9736;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.barra-botoes .btn-simular:hover {
+  background-color: #db9736; /* #db9837*/  
+  transform: scale(1.05);    /* leve aumento ao passar o mouse */
+}
+
+#painel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+}
+
+#container {
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+
+#esquerda {
+  flex: none;
+  min-width: 0;
+  border: 1px solid #ccc;  
+  padding: 10px;
+  background-color: #3d7a44; 
+  border-radius: 10px;
+  max-width: 260px;
+}
+
+#direita {
+  flex: 75%;
+  min-width: 0;
+  border: 1px solid #ccc;  
+  padding: 10px;
+  background-color: #7fa88a;
+  border-radius: 10px;
+}
+
+#instrucao {
+  margin: 10px 0 20px 0;
+  font-size: 16px;
+  color: #333;
+  width: 100%;
+}
+
+#cargos {
+  min-height: 200px;
+  border: 2px solid #000;          /* borda preta */
+  background-color: #fff;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.3); /* sombra */
+  padding: 15px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+  width: 100%;
+}
+
+.caixinha {
+  display: inline-block;
+  width: 30px;
+  height: 40px;
+  margin: 2px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 20px;
+  line-height: 40px;
+  background-color: #ffffff; 
+  vertical-align: top;
+}
+
+.cargo {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.cargo.selecionado .caixinha {
+  background-color: #d9ead3; /* azul claro */
+  border-color: #1d4620;     /* borda azul */
+  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* leve sombra */
+}
+
+.cargo.selecionado .caixinha {
+  background-color: #d9ead3; /* azul claro, por exemplo */
+}
+
+#mapa table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background-color:  #f5f2eb; /* #e8e3c3*/
+}
+
+#mapa th {
+  border: 2px solid #ccc;
+  padding: 5px;
+  text-align: center;
+  background-color:   #f5f2eb; /* #e8e3c3*/
+}
+
+#mapa td {
+  border: 2px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  background-color:  #f5f2eb; /* #e8e3c3*/
+  /*transition: border-color 0.3s, box-shadow 0.3s;*/
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s, box-shadow 0.3s;
+}
+
+#mapa td:hover {
+  border-color: #1d4620; /* cor da borda destacada */
+  box-shadow: 0 0 8px rgba(0, 102, 204, 0.5); /* leve brilho */
+  background-color: #ffffff;    /* opcional: muda a cor de fundo */
+}
+
+#mapa img {
+  width: 80px;
+  height: 100px;
+  display: block;
+  margin: auto;
+}
+
+.cel-partido {
+  font-weight: bold;
+  text-align: center;
+  color: #1d4620;
+  cursor: pointer;
+}
+
+/* Container flexí­vel para as imagens */
+.imagens-container {
+  display: flex;
+  flex-wrap: wrap;          /* permite quebrar linha em telas pequenas */
+  justify-content: center;  /* centraliza horizontalmente */
+  text-align: center;       /* centraliza texto abaixo das imagens */
+}
+
+/* Cada bloco de imagem + legenda */
+.imagens-container figure {
+  margin: 5px;
+  flex: 1 1 50px;          /* ocupa espaço mínimo de 50px e cresce conforme necessário */
+}
+
+/* Imagens responsivas */
+.imagens-container img {
+  max-width: 100px;         /* largura máxima */
+  width: 100%;              /* ocupa toda a largura disponível do bloco */
+  height: auto;             /* mantém proporção */
+  border-radius: 6px;       /* opcional: cantos arredondados */
+}
+
+/* Legenda */
+.imagens-container figcaption {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #000;
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 600px) {
+  .imagens-container {
+    flex-direction: column; /* imagens ficam em coluna */
+  }
+  .imagens-container figure {
+    flex: 1 1 100%;         /* cada imagem ocupa toda a largura */
+  }
+}
+
+.numero-candidato {
+  font-size: 1.5em;   /* aumenta só o número */
+  font-weight: bold;  /* deixa em negrito */
+  color: #000;      /* cor preta para destacar */
+}
+
+.vaga-candidato {
+  font-weight: italic;
+}
+
+.colinha {
+  border: 2px solid #000;          /* borda preta */
+  background-color: #fff;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.3); /* sombra */
+  padding: 0;
+  margin: 0;
+}
+
+#colinhaFinal {
+  position: absolute;
+  top: var(--colinha-top, 483px);
+  left: var(--colinha-left, 56px);
+  z-index: 10;
+  border: 2px solid #000;
+  background-color: #fff;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  width: 180px;
+  overflow: hidden;
+  transform-origin: top left;
+
+  /* Inicialmente fora da tela */
+  transform: translateX(-100%);
+  opacity: 0;
+
+  /* Animação */
+  animation: slideIn 1s ease-out forwards;
+}
+
+#colinhaFinal[hidden] {
+  display: none;
+}
+
+.colinha-summary {
+  min-height: 30px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  color: #fff;
+  background: #1d4620;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.colinha-summary::-webkit-details-marker {
+  display: none;
+}
+
+.colinha-summary::after {
+  content: "+";
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+#colinhaFinal[open] .colinha-summary::after {
+  content: "−";
+}
+
+.colinha-progress {
+  margin-left: auto;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.colinha-summary:focus-visible {
+  outline: 3px solid #db9736;
+  outline-offset: -3px;
+}
+
+.colinha-content {
+  padding: 4px 12px 8px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%) scale(var(--colinha-scale, 1));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(var(--colinha-scale, 1));
+    opacity: 1;
+  }
+}
+
+.cargoFinal {
+  margin-inline: -4px;
+  padding-inline: 4px;
+  margin-bottom: 2px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cargoFinal:last-child {
+  margin-bottom: 0;
+}
+
+.cargoFinal-header {
+  min-height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.cargoFinal h2 {
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.05;
+}
+
+.cargoFinal-status {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #8d949d;
+  border-radius: 50%;
+  color: #5d6572;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cargoFinal.is-current {
+  background: #e6f0e2;
+  box-shadow: inset 3px 0 0 #1d4620;
+}
+
+.cargoFinal.is-current .cargoFinal-status {
+  color: #fff;
+  border-color: #1d4620;
+  background: #1d4620;
+}
+
+.cargoFinal.is-current .cargoFinal-status::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid #fff;
+  transform: translateX(1px);
+}
+
+.cargoFinal.is-completed {
+  background: #edf5ea;
+}
+
+.cargoFinal.is-completed .cargoFinal-status {
+  color: #fff;
+  border-color: #427b36;
+  background: #427b36;
+  font-size: 11px;
+}
+
+.cargoFinal.is-completed .caixinhaFinal {
+  background: #f4f8f2;
+}
+
+.caixinhaFinal {
+  display: inline-block;
+  width: 25px;
+  height: 30px;
+  margin: 1px 2px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  text-align: center;
+  line-height: 30px;
+  background-color: #ffffff; 
+  font-size: 16px;
+  vertical-align: top;
+}
+
+@media (max-width: 720px) {
+  #container {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 480px) {
+  #colinhaFinal {
+    --colinha-scale: 1;
+    position: relative;
+    top: auto;
+    left: auto;
+    width: calc(100% - 24px);
+    max-width: 360px;
+    margin: 12px auto;
+  }
+}
+

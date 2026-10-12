@@ -1,0 +1,1382 @@
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../fonts/AtkinsonHyperlegibleNext-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../fonts/AtkinsonHyperlegibleNext-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+
+/* Tema do Supremo Eleitoral de Lealand (SEL).
+   Derivado de meu/recuperado/css/vota-wasm.css. Paleta a partir do branding
+   oficial (branding.lealand.leafole.dev — globalstyle.css: fundo #e9efe6,
+   verde institucional #90c87c, fonte Arial). Verdes escurecidos para contraste
+   de texto. Laranja #db9736 mantido só como foco visível/acento funcional. */
+:root {
+  color-scheme: light;
+  --ink: #1a1a1a;
+  --muted: #4a5548;
+  --line: #b9c7b4;
+  --panel: #f4f7f2;
+  --paper: #fff;
+  --accent: #2e7d32;
+  --ballot: #3d7a44;
+  --sel-dark: #1d4620;
+  --sel-light: #e9efe6;
+  --sel-brand: #90c87c;
+  --urna-screen-left: 116px;
+  --urna-screen-top: 17px;
+  --urna-screen-width: 560px;
+  --urna-screen-height: 350px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, "Inter", sans-serif;
+  color: var(--ink);
+  background: #dfe7dc;
+  overflow-wrap: break-word;
+}
+
+button, input {
+  font: inherit;
+}
+
+.home-body {
+  background: #e9efe6;
+}
+
+.top-bar {
+  min-height: 36px;
+  background: #1d4620;
+}
+
+.brand-row {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 28px;
+  background: #fff;
+  border-bottom: 3px solid #1d4620;
+}
+
+/* Marca institucional SEL inserida via js/sel-navigation.js */
+.sel-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: auto;
+}
+
+.brand-row .sel-brand img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.sel-brand-over {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1d4620;
+  line-height: 1.2;
+}
+
+.sel-brand-under {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.brand-row img {
+  flex: 0 0 auto;
+  width: min(115px, 100%);
+  height: auto;
+}
+
+.selected-scenario {
+  min-width: 0;
+  margin: 0 0 0 auto;
+  display: grid;
+  justify-items: end;
+  color: #1d4620;
+  line-height: 1.15;
+  text-align: right;
+}
+
+.selected-scenario-caption {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.selected-scenario-name {
+  margin-top: 2px;
+  font-size: clamp(0.84rem, 1.3vw, 1rem);
+}
+
+.home-main {
+  width: min(980px, calc(100vw - 32px));
+  margin: 24px auto;
+}
+
+.home-main h1 {
+  margin: 0 0 12px;
+  font-size: 1.55rem;
+}
+
+.home-main p {
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 20px;
+  background-color: #3d7a44;
+  border-radius: 10px;
+}
+
+.scenario-card {
+  width: 100%;
+  min-height: 132px;
+  padding: 16px;
+  background-color:  #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink);
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s, box-shadow 0.3s;
+}
+
+.scenario-card:not(:disabled):hover {
+  border-color: #000; /* cor da borda destacada */
+  box-shadow: 0 0 8px rgba(0, 102, 204, 0.5); /* leve brilho */
+  background-color: #f5f2eb;    /* muda a cor de fundo */
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .scenario-card:not(:disabled):hover {
+    transform: scale(1.03);
+  }
+}
+
+.scenario-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.scenario-card-description {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.scenario-card.selected,
+.acessibilidade-card.selected {
+  border: 3px solid #1d4620;
+  background: #e9f2e6;
+  box-shadow: 0 0 0 2px rgba(27, 48, 90, 0.12);
+}
+
+.selection-status {
+  justify-self: start;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #fff;
+  background: #1d4620;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.scenario-card.disabled,
+.scenario-card:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.simulation-layout {
+  position: relative;
+}
+
+.app-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  padding: 18px;
+  margin-inline: auto;
+}
+
+.stage {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ballot-strip {
+  width: min(785px, 100%);
+  min-height: 166px;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  background: var(--ballot);
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.ballot-title {
+  padding: 10px 12px;
+  color: #fff;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+}
+
+.guide-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  background: var(--accent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.52);
+}
+
+.candidate-section {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #2e7d32;
+}
+
+.candidate-section[hidden] {
+  display: none;
+}
+
+.candidate-list-title {
+  padding: 7px 12px;
+  color: #fff;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.16);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.48);
+}
+
+.candidates {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.candidate {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  min-height: 94px;
+  padding: 8px 6px;
+  color: #fff;
+  border-right: 1px solid rgba(255, 255, 255, 0.38);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+  text-align: center;
+}
+
+.candidate:nth-child(5n),
+.candidate:last-child {
+  border-right: 0;
+}
+
+.candidate .number {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.candidate .name {
+  font-size: 0.86rem;
+  line-height: 1.15;
+}
+
+.candidate .party {
+  font-size: 0.78rem;
+  opacity: 0.86;
+}
+
+.empty-candidates {
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  min-height: 94px;
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+}
+
+.accessibility-command {
+  display: grid;
+  grid-template-rows: auto auto;
+  place-items: center;
+  gap: 6px;
+  min-height: 94px;
+  padding: 10px 6px;
+  color: #fff;
+  border-right: 1px solid rgba(255, 255, 255, 0.38);
+  text-align: center;
+}
+
+.accessibility-command:last-child {
+  border-right: 0;
+}
+
+.accessibility-key {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.accessibility-action {
+  max-width: 100%;
+  font-size: 0.86rem;
+  line-height: 1.15;
+}
+
+.guide-cards .accessibility-command:nth-child(3n),
+.guide-cards .accessibility-command:last-child {
+  border-right: 0;
+}
+
+.guide-card {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-height: 94px;
+  padding: 10px 8px;
+  color: #fff;
+  border-right: 1px solid rgba(255, 255, 255, 0.38);
+  text-align: center;
+}
+
+.guide-card-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.guide-card-text {
+  font-size: 0.82rem;
+  line-height: 1.2;
+}
+
+.guide-cards .guide-card:nth-child(3n),
+.guide-cards .guide-card:last-child {
+  border-right: 0;
+}
+
+.finish-panel {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  margin: 12px;
+  padding: 14px 16px;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid #1c1c1c;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.16);
+}
+
+.finish-kicker {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.finish-panel h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.finish-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.finish-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.finish-button {
+  min-height: 40px;
+  padding: 8px 12px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #7f8894;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.finish-button.primary {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.finish-button:focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 2px;
+}
+
+.urna-shell {
+  width: 785px;
+  height: 715px;
+  position: relative;
+  background-image: url("../images/urna.svg");
+  background-color: #eeeee4;
+  background-size: cover;
+  background-position: center;
+  border-radius: 21px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  flex: 0 0 auto;
+}
+
+#uenux-screen {
+  position: absolute;
+  left: var(--urna-screen-left);
+  top: var(--urna-screen-top);
+  z-index: 1;
+  width: var(--urna-screen-width);
+  height: var(--urna-screen-height);
+  display: block;
+  background: #fff;
+  image-rendering: optimizeQuality;
+}
+
+#uenux-gif-layer {
+  /* Camada de GIFs do motor (intérprete de Libras). Em Lealand nenhum GIF é
+     exibido: js/sel-sem-libras.js remove os <img> inseridos; esta regra garante
+     que nada dessa camada ocupe espaço visível. Fotos dos candidatos são JPEG
+     desenhados no canvas e não dependem desta camada. */
+  display: none !important;
+}
+
+.keyboard {
+  position: absolute;
+  left: 336px;
+  top: 424px;
+  display: grid;
+  grid-template-columns: 60px 60px 60px 90px;
+  gap: 10px;
+}
+
+.key-button {
+  width: 57px;
+  height: 46px;
+  padding-left: 4px;
+  border: 2px solid gray;
+  border-radius: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.1s;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.key-button:active {
+  transform: scale(0.94);
+  filter: brightness(0.85);
+}
+
+.btn-num { background-color: #3d4e58; color: #e6f1ff; background-size: 98%; background-repeat: no-repeat; background-position: center center; }
+.btn-1 { background-image: url("../images/botao-1.svg"); }
+.btn-2 { background-image: url("../images/botao-2.svg"); }
+.btn-3 { background-image: url("../images/botao-3.svg"); }
+.btn-4 { background-image: url("../images/botao-4.svg"); }
+.btn-5 { background-image: url("../images/botao-5.svg"); }
+.btn-6 { background-image: url("../images/botao-6.svg"); }
+.btn-7 { background-image: url("../images/botao-7.svg"); }
+.btn-8 { background-image: url("../images/botao-8.svg"); }
+.btn-9 { background-image: url("../images/botao-9.svg"); }
+.btn-0 { background-image: url("../images/botao-0.svg"); }
+.btn-bra, .btn-cor, .btn-con { width: 84px; color: #000; font-size: 14px; font-weight: 400; letter-spacing: 1px; padding-left: 2px; }
+.btn-bra { background-image: url("../images/botao-branco.svg"); background-size: 98%; background-repeat: no-repeat; background-position: center center; background-color: #f7f7f7; }
+.btn-cor { background-image: url("../images/botao-corrige.svg"); background-size: 98%; background-repeat: no-repeat; background-position: center center; background-color: #fe5100; }
+.btn-con { background-image: url("../images/botao-confirma.svg"); background-size: 98%; background-repeat: no-repeat; background-position: center center; background-color: #4da94f; height: 100px; grid-row: span 2; }
+.btn-nop { width: 57px; height: 46px; visibility: hidden; }
+
+.help {
+  width: min(785px, 100%);
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.help summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.help p {
+  margin: 10px 0 0;
+  line-height: 1.45;
+}
+
+.guide {
+  display: none;
+  grid-template-rows: auto auto auto;
+  gap: 14px;
+  min-width: 0;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 14px;
+}
+
+h1, h2 {
+  margin: 0 0 8px;
+  line-height: 1.15;
+}
+
+h1 { font-size: 1.2rem; }
+h2 { font-size: 1rem; }
+
+.status {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.diagnostics {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.diagnostics summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.diagnostics div {
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+
+#mt {
+  white-space: pre;
+  min-height: 74px;
+  overflow: hidden;
+  font-size: 0.9rem;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 1220px) {
+  .guide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+}
+
+@media (max-width: 840px) {
+  .app {
+    padding: 10px;
+  }
+
+  .stage {
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .scenario-grid,
+  .guide {
+    grid-template-columns: 1fr;
+  }
+}
+
+.progress-navigation {
+  width: 100%;
+  background: #fff;
+}
+
+.progress-container {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  background: #b9c7b4;
+  list-style: none;
+}
+
+.progress-panel {
+  min-width: 0;
+}
+
+.progress-link {
+  min-height: 72px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: inherit;
+  background: #f8f9fb;
+  text-align: left;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.progress-panel.is-current .progress-link {
+  background: #2e7d32;
+  color: #fff;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.18);
+}
+
+.progress-panel.is-unlocked .progress-link {
+  color: #1d4620;
+  background: #fff;
+}
+
+.progress-panel.is-unlocked .progress-link:hover {
+  background: #e6f0e2;
+  box-shadow: inset 0 -4px 0 #3d7a44;
+}
+
+.progress-panel.is-locked .progress-link {
+  color: #6c737d;
+  background: #e7e9ec;
+}
+
+.progress-link:focus-visible,
+.scenario-card:focus-visible,
+.acessibilidade-card:focus-visible {
+  outline: 3px solid #db9736;
+  outline-offset: -3px;
+}
+
+.progress-number {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.progress-panel.is-unlocked .progress-number {
+  color: #fff;
+  border-color: #1d4620;
+  background: #1d4620;
+}
+
+.progress-panel.is-current .progress-number {
+  color: #1d4620;
+  border-color: #fff;
+  background: #fff;
+}
+
+.progress-label {
+  max-width: 100%;
+  font-size: clamp(0.78rem, 1.15vw, 0.98rem);
+  font-weight: 700;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .progress-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .progress-link {
+    min-height: 64px;
+    padding: 7px 10px;
+    gap: 8px;
+  }
+
+  .progress-number {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+  }
+}
+
+.acessibilidade-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background-color: #3d7a44;
+  border-radius: 10px;
+}
+
+.acessibilidade-card {
+  width: 100%;
+  min-height: 100px;
+  padding: 14px;
+  background-color:  #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink);
+  display: grid;
+  gap: 10px;
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s, box-shadow 0.3s;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.acessibilidade-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.acessibilidade-card .selection-status {
+  justify-self: center;
+}
+
+.acessibilidade-card:hover {
+  border-color: #000; /* cor da borda destacada */
+  box-shadow: 0 0 8px rgba(0, 102, 204, 0.5); /* leve brilho */
+  background-color: #f5f2eb;    /* muda a cor de fundo */
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .acessibilidade-card:hover {
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-row {
+    gap: 12px;
+    padding-inline: 16px;
+  }
+
+  .selected-scenario-caption {
+    font-size: 0.62rem;
+  }
+
+  .selected-scenario-name {
+    font-size: 0.8rem;
+  }
+
+  .home-main {
+    width: calc(100vw - 24px);
+    margin-block: 18px;
+  }
+
+  .scenario-grid,
+  .acessibilidade-grid {
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .acessibilidade-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==== Supremo Eleitoral de Lealand: página inicial e rodapé ==== */
+
+.progress-container.sel-steps {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sel-hero {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-top: 6px solid #1d4620;
+  border-radius: 10px;
+  padding: 22px;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  text-align: center;
+}
+
+.sel-hero img {
+  width: 120px;
+  height: auto;
+}
+
+.sel-hero h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #1d4620;
+}
+
+.sel-hero .sel-sub {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+.sel-candidates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.sel-candidate {
+  border: 2px solid #1d4620;
+  border-radius: 10px;
+  background: #f4f7f2;
+  padding: 14px 10px;
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  text-align: center;
+}
+
+.sel-candidate .num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1d4620;
+}
+
+.sel-candidate .name {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.sel-candidate .vice {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.sel-start {
+  min-height: 52px;
+  padding: 12px 34px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  background: #2e7d32;
+  border: 1px solid #1d4620;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sel-start:hover {
+  background: #1d4620;
+}
+
+.sel-start:focus-visible {
+  outline: 3px solid #db9736;
+  outline-offset: 2px;
+}
+
+.sel-flow {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Configuração da colinha auxiliar (index.html) */
+.sel-colinha-config {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f4f7f2;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+  text-align: left;
+}
+
+.sel-colinha-config h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #1d4620;
+  text-align: center;
+}
+
+.sel-colinha-note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+  text-align: center;
+}
+
+.sel-colinha-rows {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sel-colinha-rows label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1d4620;
+  text-align: center;
+}
+
+.sel-colinha-rows input {
+  min-height: 48px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1d4620;
+  background: #fff;
+  border: 2px solid #1d4620;
+  border-radius: 8px;
+}
+
+.sel-colinha-rows input:focus-visible {
+  outline: 3px solid #db9736;
+  outline-offset: 2px;
+}
+
+.sel-colinha-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sel-start-small {
+  min-height: 44px;
+  padding: 8px 22px;
+  font-size: 1rem;
+}
+
+#sel-colinha-msg {
+  font-size: 0.9rem;
+  color: #1d4620;
+  min-height: 1.2em;
+}
+
+/* Números da colinha auxiliar exibidos na urna (vota-wasm.html) */
+.colinha-minha {
+  display: grid;
+  gap: 4px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  background: #e9f2e6;
+  border: 1px dashed #1d4620;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.colinha-minha-title {
+  font-weight: 700;
+  color: #1d4620;
+}
+
+.colinha-minha-hint {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  .sel-colinha-rows {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sel-footer {
+  margin: 26px auto 30px;
+  width: min(980px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.sel-footer img {
+  width: 44px;
+  height: auto;
+}
+
+/* Distintivo SEL no gabinete (a marca brasileira em relevo foi removida do
+   SVG — ver tools; o distintivo ocupa a faixa lateral livre, sem cobrir
+   teclado, tela ou colinha). */
+.sel-hw-badge {
+  position: absolute;
+  left: 646px;
+  top: 440px;
+  width: 128px;
+  height: 180px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #fff;
+  border: 2px solid #1d4620;
+  border-radius: 10px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+  padding: 10px 8px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.sel-hw-badge img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.sel-hw-badge span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1d4620;
+  line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+  .sel-candidates {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sel-estado-linha {
+  margin: 0;
+  font-size: 1rem;
+  color: #1d4620;
+}
+
+/* Urna de apuração (apuracao.html) */
+.apuracao-painel {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.apuracao-vazio {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  text-align: center;
+  max-width: 60ch;
+}
+
+.apuracao-info {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.apuracao-tabela {
+  width: 100%;
+  max-width: 560px;
+  border-collapse: collapse;
+  background: #fff;
+  border: 2px solid #1d4620;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 1rem;
+}
+
+.apuracao-tabela th,
+.apuracao-tabela td {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.apuracao-tabela th {
+  background: #1d4620;
+  color: #fff;
+}
+
+.apuracao-tabela td:last-child {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.apuracao-total td {
+  background: #e9f2e6;
+  font-weight: 700;
+}
+
+.apuracao-teclas {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.apuracao-tecla {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  background: #f4f7f2;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.apuracao-tecla kbd {
+  min-width: 40px;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  background: #1d4620;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.apuracao-botoes {
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .apuracao-teclas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Gerenciador de sessões (sessoes/index.html) */
+button.sel-candidate {
+  font: inherit;
+  cursor: pointer;
+}
+
+button.sel-candidate:hover {
+  border-color: #2e7d32;
+  background: #fff;
+}
+
+.sessao-json {
+  max-width: 100%;
+  max-height: 260px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#sessao-msg {
+  min-height: 1.2em;
+  color: #1d4620;
+  font-weight: 700;
+}
+
+/* Lista de checagens da validação (apuracao/) */
+.apuracao-checks {
+  width: 100%;
+  max-width: 640px;
+  max-height: 220px;
+  overflow: auto;
+  margin: 0;
+  padding: 10px 10px 10px 28px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.apuracao-checks li.ok {
+  color: #1d4620;
+}
+
+.apuracao-checks li.falha {
+  color: #a12323;
+  font-weight: 700;
+}
+
+/* Portal SEL (index.html) */
+.sel-nav-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.sel-nav-card {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+  border: 2px solid #1d4620;
+  border-radius: 10px;
+  background: #f4f7f2;
+  padding: 16px 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.sel-nav-card:hover {
+  background: #fff;
+}
+
+.sel-nav-card strong {
+  font-size: 1.1rem;
+  color: #1d4620;
+}
+
+.sel-nav-card span {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+  .sel-nav-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Importação de ZIP e boletim (apuracao.html) */
+.apuracao-importar {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  background: #f4f7f2;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.9rem;
+}
+
+.apuracao-importar input[type="file"] {
+  max-width: 100%;
+  font: inherit;
+}
+
+.apuracao-importar input[type="file"]:focus-visible,
+.finish-button:focus-visible,
+.sel-start:focus-visible {
+  outline: 3px solid #db9736;
+  outline-offset: 2px;
+}
+
+.apuracao-erro {
+  width: 100%;
+  max-width: 560px;
+  background: #fbeeee;
+  border: 2px solid #a12323;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #7a1a1a;
+}
+
+.apuracao-erro-titulo {
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.apuracao-erro ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.boletim {
+  width: 100%;
+  max-width: 640px;
+  background: #fff;
+  border: 2px solid #1d4620;
+  border-radius: 10px;
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.boletim-autoridade {
+  font-weight: 700;
+  color: #1d4620;
+}
+
+.boletim-titulo {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #1d4620;
+}
+
+.boletim-dados {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.boletim-dados dt {
+  font-weight: 700;
+  color: #1d4620;
+}
+
+.boletim-dados dd {
+  margin: 0;
+}

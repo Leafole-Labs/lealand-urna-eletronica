@@ -1,0 +1,158 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-165555-36g6l",
+  "inicio": "2026-10-11T19:55:55.999Z",
+  "fim": null,
+  "estado": "READY",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 2,
+  "mesario": {
+    "nome": "Mesaria Teste da Silva",
+    "matricula": "SEL-TESTE-0001",
+    "registradoEm": "2026-10-11T19:56:30.708Z"
+  },
+  "votos": [
+    {
+      "seq": 1,
+      "clientVoteId": "sel-20261011-165555-36g6l-mv48uxxv-2qs4m",
+      "cargo": "Gerente",
+      "tipo": "nominal",
+      "numero": "91",
+      "registradoEm": "2026-10-11T19:56:47.826Z"
+    },
+    {
+      "seq": 2,
+      "clientVoteId": "sel-20261011-165555-36g6l-mv48vfru-g68m",
+      "cargo": "Gerente",
+      "tipo": "nominal",
+      "numero": "92",
+      "registradoEm": "2026-10-11T19:57:10.937Z"
+    }
+  ],
+  "eventos": [
+    {
+      "t": "2026-10-11T19:55:58.969Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:55:58.970Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:25.040Z",
+      "tipo": "TESTE_TECLADO",
+      "detalhe": "13 teclas detectadas pela cadeia real (0,1,2,3,4,5,6,7,8,9,B,D,C).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:25.041Z",
+      "tipo": "ESTADO",
+      "detalhe": "KEYBOARD_TEST → PREPARING (teclado OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:25.041Z",
+      "tipo": "ESTADO",
+      "detalhe": "PREPARING → WAITING_FOR_POLL_WORKER (pronta para parear)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:29.870Z",
+      "tipo": "PAREAMENTO",
+      "detalhe": "Terminal do mesário pareado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:30.708Z",
+      "tipo": "REGISTRO_MESARIO",
+      "detalhe": "Mesaria Teste da Silva (SEL-TESTE-0001).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:30.709Z",
+      "tipo": "ESTADO",
+      "detalhe": "WAITING_FOR_POLL_WORKER → READY (mesário registrado)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:32.224Z",
+      "tipo": "HABILITACAO",
+      "detalhe": "Eleitor nº 1 habilitado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:32.225Z",
+      "tipo": "ESTADO",
+      "detalhe": "READY → VOTER_AUTHORIZED (eleitor 1)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:33.741Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTER_AUTHORIZED → VOTING (eleitor 1)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:47.826Z",
+      "tipo": "VOTO",
+      "detalhe": "seq 1 (nominal 91).",
+      "vis": "sigiloso"
+    },
+    {
+      "t": "2026-10-11T19:56:47.827Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTING → VOTE_FINISHED (eleitor 1)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:48.082Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTE_FINISHED → READY (urna pronta para o próximo)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:55.354Z",
+      "tipo": "HABILITACAO",
+      "detalhe": "Eleitor nº 2 habilitado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:55.355Z",
+      "tipo": "ESTADO",
+      "detalhe": "READY → VOTER_AUTHORIZED (eleitor 2)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:56:56.867Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTER_AUTHORIZED → VOTING (eleitor 2)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:57:10.937Z",
+      "tipo": "VOTO",
+      "detalhe": "seq 2 (nominal 92).",
+      "vis": "sigiloso"
+    },
+    {
+      "t": "2026-10-11T19:57:10.938Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTING → VOTE_FINISHED (eleitor 2)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T19:57:11.211Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTE_FINISHED → READY (urna pronta para o próximo)",
+      "vis": "publico"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

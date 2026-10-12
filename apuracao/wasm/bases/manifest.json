@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-11T13:10:45",
+  "scenarios": [
+    {
+      "id": "lealand-gerente",
+      "scenario": "lealand",
+      "label": "Eleição de Lealand — Gerente",
+      "description": "Cenário oficial de Lealand: cargo único de Gerente (91 Tibúrcio, 92 Dagoberto, 93 Quitéria).",
+      "fase": "te",
+      "pe": 2400,
+      "uf": "ac",
+      "turno": 2,
+      "municipio": 1,
+      "zona": 1,
+      "secao": 1,
+      "aliases": [
+        {
+          "source": "/dsk/fi/estatico",
+          "target": "/dsk/fe/estatico"
+        },
+        {
+          "source": "/dsk/fi/serialv.dat",
+          "target": "/dsk/fe/serialv.dat"
+        }
+      ],
+      "data": "lealand-gerente.data",
+      "dataJs": "lealand-gerente.data.js"
+    },
+    {
+      "id": "lealand-oficial",
+      "scenario": "lealand",
+      "label": "Eleição de Lealand — Gerente (oficial)",
+      "description": "Mídia oficial de Lealand: fase oficial do motor (sem TREINAMENTO).",
+      "fase": "of",
+      "pe": 2400,
+      "uf": "ac",
+      "turno": 2,
+      "municipio": 1,
+      "zona": 1,
+      "secao": 1,
+      "aliases": [
+        {
+          "source": "/dsk/fi/estatico",
+          "target": "/dsk/fe/estatico"
+        },
+        {
+          "source": "/dsk/fi/serialv.dat",
+          "target": "/dsk/fe/serialv.dat"
+        }
+      ],
+      "data": "lealand-oficial.data",
+      "dataJs": "lealand-oficial.data.js"
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+/* Terminal do mesário — identidade SEL, sem dark desnecessário. */
+:root {
+  color-scheme: light;
+  --ink: #1a1a1a;
+  --muted: #4a5548;
+  --line: #b9c7b4;
+  --accent: #2e7d32;
+  --dark: #1d4620;
+  --paper: #fff;
+  --bg: #e9efe6;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.mesario-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 4px solid var(--dark);
+}
+
+.mesario-topo img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.mesario-topo div {
+  display: grid;
+}
+
+.mesario-topo strong {
+  color: var(--dark);
+}
+
+.mesario-topo span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.mesario-conexao {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e9f2e6;
+  border: 1px solid var(--dark);
+  color: var(--dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.mesario-grade {
+  width: min(1100px, calc(100vw - 28px));
+  margin: 18px auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mesario-painel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--dark);
+  border-radius: 10px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.mesario-painel h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--dark);
+}
+
+.mesario-dados {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.mesario-dados dt {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.mesario-dados dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.mesario-aviso {
+  min-height: 1.2em;
+  margin: 0;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.mesario-explica {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.mesario-painel label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.mesario-painel input {
+  min-height: 44px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 2px solid var(--dark);
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.mesario-painel input:focus-visible,
+.mesario-painel button:focus-visible,
+.mesario-painel a:focus-visible {
+  outline: 3px solid #db9736;
+  outline-offset: 2px;
+}
+
+.mesario-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mesario-painel button {
+  min-height: 44px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--dark);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mesario-painel button:hover:not(:disabled) {
+  background: var(--dark);
+}
+
+.mesario-painel button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mesario-feed ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.mesario-ajuda {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+
+.mesario-ajuda kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  padding: 2px 8px;
+  background: var(--dark);
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.mesario-rodape {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: #fff;
+  border-top: 4px solid var(--dark);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.mesario-rodape img {
+  width: 40px;
+  height: auto;
+}
+
+@media (max-width: 760px) {
+  .mesario-grade {
+    grid-template-columns: 1fr;
+  }
+}

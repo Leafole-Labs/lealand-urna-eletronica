@@ -1,0 +1,7 @@
+{
+  "name": "urna-real-sel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Urna real de Lealand (SEL): servidor local + urna + terminal do mesário. Zero dependências."
+}

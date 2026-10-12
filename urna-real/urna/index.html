@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- Urna real de Lealand (pacote urna-real/): SOMENTE UENUX Screen + teclado
+     físico, com ciclo eleitoral completo dirigido pelo servidor local:
+     BOOT → SELF_TEST → KEYBOARD_TEST → PREPARING → WAITING → READY →
+     AUTHORIZED → VOTING → FINISHED → READY … → CLOSING → CLOSED.
+     Sem botões, sem teclado visual/virtual, sem mesário, sem apuração.
+     Motor em fase OFICIAL (sem TREINAMENTO). -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Urna Real de Lealand — Supremo Eleitoral de Lealand</title>
+  <link rel="icon" href="../shared/brand/brand-coat.png">
+  <link rel="stylesheet" href="urna.css?v=sel-urna-real-2">
+</head>
+<body>
+  <header class="urna-real-topo">
+    <img src="../shared/brand/brand-coat.png" alt="Brasão de Lealand">
+    <div class="urna-real-titulos">
+      <strong>Supremo Eleitoral de Lealand</strong>
+      <span>Urna Real — UENUX Screen · voto pelo teclado físico</span>
+    </div>
+  </header>
+  <p id="urna-real-sessao" class="urna-real-sessao" role="status">Ligando…</p>
+  <section id="urna-real-etapa" class="urna-real-etapa" aria-label="Etapa da urna"></section>
+  <main class="urna-real-palco" aria-label="Tela da urna">
+    <!-- Quadro isolado do motor WASM (motor.html): recriado entre eleitores
+         sem recarregar esta página. Oculto antes do mesário assumir e ao encerrar. -->
+    <div id="urna-real-motor"></div>
+  </main>
+  <div id="urna-real-carregando" class="urna-real-carregando">Carregando urna de Lealand…</div>
+  <footer class="urna-real-rodape">
+    <img src="../shared/brand/brand-flag.png" alt="Bandeira de Lealand">
+    <span>Supremo Eleitoral de Lealand (SEL) — Urna Real. Cargo único: Gerente.</span>
+  </footer>
+  <script type="module" src="./urna.js?v=sel-urna-real-4"></script>
+</body>
+</html>

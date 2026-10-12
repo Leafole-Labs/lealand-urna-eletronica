@@ -1,0 +1,114 @@
+{
+  "versao": 1,
+  "urna": "lealand-gerente",
+  "sessionId": "sel-20261011-191255-4yq4e",
+  "inicio": "2026-10-11T22:12:55.100Z",
+  "fim": null,
+  "estado": "READY",
+  "motorFase": "oficial",
+  "faseNumerica": 2,
+  "eleitorSeq": 1,
+  "mesario": {
+    "nome": "Rfonte",
+    "matricula": "123",
+    "registradoEm": "2026-10-11T22:13:29.180Z"
+  },
+  "votos": [
+    {
+      "seq": 1,
+      "clientVoteId": "sel-20261011-191255-4yq4e-mv4drbqt-7fm9r",
+      "cargo": "Gerente",
+      "tipo": "nulo",
+      "numero": "00",
+      "registradoEm": "2026-10-11T22:13:57.174Z"
+    }
+  ],
+  "eventos": [
+    {
+      "t": "2026-10-11T22:12:59.604Z",
+      "tipo": "ESTADO",
+      "detalhe": "BOOT → SELF_TEST (autoteste recebido)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:12:59.605Z",
+      "tipo": "ESTADO",
+      "detalhe": "SELF_TEST → KEYBOARD_TEST (autotestes OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:09.077Z",
+      "tipo": "TESTE_TECLADO",
+      "detalhe": "checagem JS concluída: 13 teclas físicas (1,2,3,4,5,6,7,8,9,0,D,C,B).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:09.079Z",
+      "tipo": "ESTADO",
+      "detalhe": "KEYBOARD_TEST → PREPARING (teclado OK)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:09.080Z",
+      "tipo": "ESTADO",
+      "detalhe": "PREPARING → WAITING_FOR_POLL_WORKER (pronta para parear)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:19.469Z",
+      "tipo": "PAREAMENTO",
+      "detalhe": "Terminal do mesário pareado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:29.180Z",
+      "tipo": "REGISTRO_MESARIO",
+      "detalhe": "Rfonte (123).",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:29.180Z",
+      "tipo": "ESTADO",
+      "detalhe": "WAITING_FOR_POLL_WORKER → READY (mesário registrado)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:45.389Z",
+      "tipo": "HABILITACAO",
+      "detalhe": "Eleitor nº 1 habilitado.",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:45.390Z",
+      "tipo": "ESTADO",
+      "detalhe": "READY → VOTER_AUTHORIZED (eleitor 1)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:48.150Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTER_AUTHORIZED → VOTING (eleitor 1)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:57.174Z",
+      "tipo": "VOTO",
+      "detalhe": "seq 1 (nulo 00).",
+      "vis": "sigiloso"
+    },
+    {
+      "t": "2026-10-11T22:13:57.175Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTING → VOTE_FINISHED (eleitor 1)",
+      "vis": "publico"
+    },
+    {
+      "t": "2026-10-11T22:13:57.512Z",
+      "tipo": "ESTADO",
+      "detalhe": "VOTE_FINISHED → READY (urna pronta para o próximo)",
+      "vis": "publico"
+    }
+  ],
+  "candidatos": {},
+  "artefatos": null
+}

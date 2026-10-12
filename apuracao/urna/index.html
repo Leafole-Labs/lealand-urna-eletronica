@@ -1,0 +1,557 @@
+<!doctype html>
+<!-- Urna de Lealand — SOMENTE o emulador do eleitor.
+     Sem réplica visual de teclado (usa o teclado físico: 0-9, Enter,
+     Backspace/Escape, Espaço/B), sem mesário, sem apuração, sem ferramentas.
+     Motor VOTA intacto; votos vão para a sessão aberta (../sessoes/). -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Urna de Lealand — Votar para Gerente</title>
+  <link rel="icon" href="../shared/brand/brand-coat.png">
+  <link rel="stylesheet" href="urna.css?v=sel-urna-1">
+  <link rel="stylesheet" href="eleitor-escolhas.css?v=sel-urna-1">
+  <script>window.SEL_ASSETS = "../shared/brand/";</script>
+  <script src="../shared/js/sel-navigation.js?v=sel-1" defer></script>
+  <script src="../shared/js/sel-sem-libras.js?v=sel-2"></script>
+  <script>
+    const votaWasmFallbackVersion = "20260702-screen-cover";
+    const votaWasmPageVersion = "sel-urna-1";
+    const votaWasmColinhaStorageKey = "sel-lealand-colinha-aberta";
+    const cargos = JSON.parse(localStorage.getItem('cargos')) || [{ nome: "Gerente", codigo: "gerente", digitos: 2 }];
+    const escolhas = JSON.parse(localStorage.getItem('escolhas')) || {};
+    let colinhaCargoAtivo = -1;
+    const colinhaCargosConcluidos = new Set();
+    let colinhaUltimoAnuncio = "";
+
+    function updateProgress(text) {
+      const progressText = document.getElementById("vota-progress-text");
+      if (progressText) {
+        progressText.textContent = text;
+      }
+    }
+
+    function votaWasmVersionedUrl(url) {
+      const version = encodeURIComponent(window.votaWasmAssetVersion || votaWasmFallbackVersion);
+      return `${url}${url.includes("?") ? "&" : "?"}v=${version}`;
+    }
+
+    async function votaWasmReadAssetVersion() {
+      try {
+        const response = await fetch(`../wasm/vota_web_wasm.version?v=${Date.now()}`, { cache: "no-store" });
+        if (response.ok) {
+          const version = (await response.text()).trim();
+          if (version) {
+            return version;
+          }
+        }
+      } catch (_) {
+        // O fallback fixo preserva o funcionamento quando o arquivo de versao ainda nao foi gerado.
+      }
+      return votaWasmFallbackVersion;
+    }
+
+    function votaWasmLoadScript(src, type) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        if (type) script.type = type;
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error(`Falha ao carregar ${src}`));
+        document.head.appendChild(script);
+      });
+    }
+
+    function votaWasmReadScreenResolution() {
+      const fallback = { width: 1280, height: 800 };
+      const params = new URLSearchParams(window.location.search);
+      const text = params.get("screen") || params.get("resolution") || params.get("resolucao") || "";
+      const match = /^(\d+)x(\d+)$/i.exec(text);
+      const width = Number(params.get("screenWidth")) || (match ? Number(match[1]) : fallback.width);
+      const height = Number(params.get("screenHeight")) || (match ? Number(match[2]) : fallback.height);
+      return width > 0 && height > 0 ? { width, height } : fallback;
+    }
+
+    const votaWasmScreenResolution = votaWasmReadScreenResolution();
+
+    window.Module = {
+      votaScreenWidth: votaWasmScreenResolution.width,
+      votaScreenHeight: votaWasmScreenResolution.height,
+      // O adaptador da urna (urna.js) é o dono do teclado físico; este
+      // marcador invisível (sem qualquer réplica visual) informa ao motor
+      // para não instalar o seu próprio listener de teclado — sem ele, cada
+      // tecla chegaria duas vezes ao motor (uma via votaPressKey, outra via
+      // fila interna uenuxKeys), e "91" viraria "991"→nulo.
+      uenuxExternalKeyboard: true,
+      locateFile(path) {
+        if (path.startsWith("vota_web_wasm.")) {
+          return votaWasmVersionedUrl("../wasm/" + path);
+        }
+        if (path.startsWith("rhvoice-leticia.")) {
+          return votaWasmVersionedUrl("../wasm/" + path);
+        }
+        if (path.endsWith(".data")) {
+          return "../wasm/bases/" + path;
+        }
+        return path;
+      },
+      postRun: [function() {
+        window.VotaWasmAdapter.start(window.Module);
+      }]
+    };
+
+    function votaWasmUpdateViewportHeight() {
+      const app = document.querySelector(".app");
+      const viewport = document.querySelector(".app-viewport");
+      if (app && viewport) {
+        const scale = Number(app.dataset.scale) || 1;
+        viewport.style.height = `${Math.ceil(app.offsetHeight * scale)}px`;
+      }
+    }
+
+    function votaWasmApplyScale() {
+      const app = document.querySelector(".app");
+      const viewport = document.querySelector(".app-viewport");
+      const layout = document.querySelector(".simulation-layout");
+      if (!app || !viewport) return;
+
+      const availableWidth = viewport.clientWidth || window.innerWidth;
+      const designWidth = 830;
+      const scale = Math.min(availableWidth / designWidth, 1.0);
+
+      app.dataset.scale = String(scale);
+      app.style.width = `${designWidth}px`;
+      app.style.transform = `scale(${scale})`;
+      app.style.transformOrigin = scale > 1 ? "top center" : "top left";
+
+      if (layout) {
+        const stageInset = window.innerWidth <= 840 ? 10 : 18;
+        const rootStyle = window.getComputedStyle(document.documentElement);
+        const screenTop = Number.parseFloat(rootStyle.getPropertyValue("--urna-screen-top")) || 17;
+        const screenHeight = Number.parseFloat(rootStyle.getPropertyValue("--urna-screen-height")) || 350;
+        const horizontalOffset = Math.max((availableWidth - designWidth * scale) / 2, 0);
+        layout.style.setProperty("--colinha-left", `${horizontalOffset + (stageInset + 38) * scale}px`);
+        layout.style.setProperty("--colinha-top", `${(stageInset + screenTop + screenHeight) * scale}px`);
+        layout.style.setProperty("--colinha-scale", String(scale));
+      }
+      window.requestAnimationFrame(votaWasmUpdateViewportHeight);
+    }
+
+    function prepararColinha() {
+      const colinha = document.getElementById("colinhaFinal");
+      if (!colinha) return;
+
+      try {
+        colinha.open = sessionStorage.getItem(votaWasmColinhaStorageKey) !== "nao";
+      } catch (_) {
+        colinha.open = true;
+      }
+
+      colinha.addEventListener("toggle", () => {
+        try {
+          sessionStorage.setItem(votaWasmColinhaStorageKey, colinha.open ? "sim" : "nao");
+        } catch (_) {
+          // Mantém o controle funcional mesmo quando o armazenamento está indisponível.
+        }
+      });
+    }
+
+    function normalizarNomeCargo(nome) {
+      return String(nome || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s*\([^)]*\)\s*$/, "")
+        .replace(/[^a-zA-Z0-9]+/g, " ")
+        .trim()
+        .toLowerCase();
+    }
+
+    function encontrarIndiceCargo(cargoWasm) {
+      const nomeWasm = normalizarNomeCargo(cargoWasm?.name);
+      return cargos.findIndex((cargo, indice) =>
+        !colinhaCargosConcluidos.has(indice)
+        && normalizarNomeCargo(cargo.nome) === nomeWasm
+      );
+    }
+
+    function atualizarProgressoColinha() {
+      const itens = document.querySelectorAll("#colinhaConteudo .cargoFinal");
+      itens.forEach((item, indice) => {
+        const concluido = colinhaCargosConcluidos.has(indice);
+        const atual = indice === colinhaCargoAtivo && !concluido;
+        const status = item.querySelector(".cargoFinal-status");
+        const nome = cargos[indice]?.nome || "Cargo";
+
+        item.classList.toggle("is-current", atual);
+        item.classList.toggle("is-completed", concluido);
+        item.removeAttribute("aria-current");
+
+        if (concluido) {
+          status.textContent = "✓";
+          status.setAttribute("aria-label", `${nome}: voto concluído`);
+        } else if (atual) {
+          item.setAttribute("aria-current", "true");
+          status.textContent = "";
+          status.setAttribute("aria-label", `${nome}: em votação`);
+        } else {
+          status.textContent = "";
+          status.setAttribute("aria-label", `${nome}: pendente`);
+        }
+      });
+
+      const concluidos = colinhaCargosConcluidos.size;
+      const progresso = document.getElementById("colinhaProgresso");
+      if (progresso) {
+        progresso.textContent = `${concluidos}/${cargos.length}`;
+        progresso.setAttribute("aria-label", `${concluidos} de ${cargos.length} cargos concluídos`);
+      }
+    }
+
+    function anunciarProgressoColinha(mensagem) {
+      const status = document.getElementById("colinhaStatus");
+      if (!status || !mensagem || mensagem === colinhaUltimoAnuncio) return;
+      colinhaUltimoAnuncio = mensagem;
+      status.textContent = mensagem;
+    }
+
+    window.addEventListener("vota:state", (event) => {
+      if (colinhaCargoAtivo >= 0 || colinhaCargosConcluidos.size > 0 || !event.detail?.cargo) return;
+      colinhaCargoAtivo = encontrarIndiceCargo(event.detail.cargo);
+      atualizarProgressoColinha();
+      if (colinhaCargoAtivo >= 0) {
+        anunciarProgressoColinha(`Agora em votação: ${cargos[colinhaCargoAtivo].nome}.`);
+      }
+    });
+
+    window.addEventListener("vota:cargo-completed", (event) => {
+      if (colinhaCargoAtivo < 0) {
+        colinhaCargoAtivo = encontrarIndiceCargo(event.detail?.cargo);
+      }
+      if (colinhaCargoAtivo < 0) return;
+
+      const cargoConcluido = cargos[colinhaCargoAtivo]?.nome;
+      colinhaCargosConcluidos.add(colinhaCargoAtivo);
+      if (event.detail?.done || colinhaCargoAtivo >= cargos.length - 1) {
+        colinhaCargoAtivo = -1;
+        anunciarProgressoColinha("Votação concluída. Todos os cargos foram votados.");
+      } else {
+        colinhaCargoAtivo += 1;
+        anunciarProgressoColinha(
+          `${cargoConcluido} concluído. Agora em votação: ${cargos[colinhaCargoAtivo].nome}.`
+        );
+      }
+      atualizarProgressoColinha();
+    });
+
+    window.addEventListener("vota:done", () => {
+      cargos.forEach((_, indice) => colinhaCargosConcluidos.add(indice));
+      colinhaCargoAtivo = -1;
+      atualizarProgressoColinha();
+      anunciarProgressoColinha("Votação concluída. Todos os cargos foram votados.");
+    });
+
+    function lerColinhaAuxiliar() {
+      var padrao = [
+        { nome: "Tibúrcio Lemos", numero: "91" },
+        { nome: "Dagoberto Sales", numero: "92" },
+        { nome: "Quitéria Vasconcellos", numero: "93" }
+      ];
+      try {
+        var salva = JSON.parse(localStorage.getItem("sel-lealand-colinha"));
+        if (Array.isArray(salva) && salva.length === 3
+            && salva.every(function (item) { return item && /^\d{2}$/.test(item.numero); })) {
+          return salva;
+        }
+      } catch (_) { /* usa padrão */ }
+      return padrao;
+    }
+
+    function mostrarColinhaFinal() {
+      const colinhaDiv = document.getElementById('colinhaFinal');
+      const colinhaConteudo = document.getElementById('colinhaConteudo');
+      if (!colinhaDiv || !colinhaConteudo) return;
+
+      colinhaConteudo.replaceChildren();
+
+      // Colinha auxiliar (display-only: não altera a eleição).
+      const auxiliar = document.createElement('div');
+      auxiliar.className = 'colinha-minha';
+      const tituloAux = document.createElement('div');
+      tituloAux.className = 'colinha-minha-title';
+      tituloAux.textContent = 'Minha colinha (auxiliar)';
+      auxiliar.appendChild(tituloAux);
+      lerColinhaAuxiliar().forEach((item) => {
+        const linha = document.createElement('div');
+        linha.textContent = `${item.nome}: ${item.numero}`;
+        auxiliar.appendChild(linha);
+      });
+      const dica = document.createElement('div');
+      dica.className = 'colinha-minha-hint';
+      dica.textContent = 'Lembrete visual — a urna aceita os números reais do dataset.';
+      auxiliar.appendChild(dica);
+      colinhaConteudo.appendChild(auxiliar);
+
+      // Colinha de Lealand: cargo único de Gerente.
+      cargos.forEach((c, indiceCargo) => {
+        const escolha = escolhas[c.codigo] || '';
+
+        const cargoDiv = document.createElement('div');
+        cargoDiv.classList.add('cargoFinal');
+        cargoDiv.dataset.cargoIndex = String(indiceCargo);
+
+        const cabecalho = document.createElement('div');
+        cabecalho.classList.add('cargoFinal-header');
+        const titulo = document.createElement('h2');
+        titulo.textContent = c.nome;
+        const status = document.createElement('span');
+        status.classList.add('cargoFinal-status');
+        cabecalho.append(titulo, status);
+        cargoDiv.appendChild(cabecalho);
+
+        // Monta as caixinhas na mesma ordem
+        for (let i = 0; i < c.digitos; i++) {
+          const caixinha = document.createElement('div');
+          caixinha.classList.add('caixinhaFinal');
+          caixinha.textContent = escolha[i] || '';
+          cargoDiv.appendChild(caixinha);
+        }
+
+        colinhaConteudo.appendChild(cargoDiv);
+      });
+
+      colinhaDiv.hidden = false;
+      atualizarProgressoColinha();
+    }
+
+    // Colinha auxiliar: edição (display-only, não toca no dataset).
+    var COLINHA_NOMES = ["Tibúrcio Lemos", "Dagoberto Sales", "Quitéria Vasconcellos"];
+    var COLINHA_PADRAO = ["91", "92", "93"];
+    function pintarColinhaCampos() {
+      var colinha = lerColinhaAuxiliar();
+      colinha.forEach(function (item, i) {
+        var campo = document.getElementById("colinha-num-" + i);
+        if (campo) campo.value = item.numero || "";
+      });
+    }
+    function salvarColinhaCampos() {
+      var msg = document.getElementById("sel-colinha-msg");
+      var colinha = COLINHA_NOMES.map(function (nome, i) {
+        var campo = document.getElementById("colinha-num-" + i);
+        return { nome: nome, numero: ((campo && campo.value) || "").replace(/\D/g, "").slice(0, 2) };
+      });
+      var invalida = colinha.some(function (item) { return !/^\d{2}$/.test(item.numero); });
+      if (msg) {
+        msg.textContent = invalida
+          ? "Use 2 dígitos em cada campo (ex.: 91). Nada foi salvo."
+          : "Colinha salva: " + colinha.map(function (c) { return c.numero; }).join(" · ") + ".";
+      }
+      if (invalida) return false;
+      try {
+        localStorage.setItem("sel-lealand-colinha", JSON.stringify(colinha));
+      } catch (_) { /* segue sem persistir */ }
+      mostrarColinhaFinal();
+      return true;
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const canvas = document.getElementById("uenux-screen");
+      if (canvas) {
+        canvas.width = votaWasmScreenResolution.width;
+        canvas.height = votaWasmScreenResolution.height;
+      }
+      prepararColinha();
+      pintarColinhaCampos();
+      var btnColinha = document.getElementById("sel-colinha-save");
+      if (btnColinha) btnColinha.addEventListener("click", salvarColinhaCampos);
+      try {
+        localStorage.setItem("cargos", JSON.stringify([{ nome: "Gerente", codigo: "gerente", digitos: 2 }]));
+        localStorage.setItem("escolhas", JSON.stringify({ gerente: "" }));
+      } catch (_) { /* segue sem colinha de progresso */ }
+      votaWasmApplyScale();
+      if ("ResizeObserver" in window) {
+        const app = document.querySelector(".app");
+        window.votaWasmResizeObserver = new ResizeObserver(votaWasmUpdateViewportHeight);
+        window.votaWasmResizeObserver.observe(app);
+      }
+      const loadingScreen = document.getElementById("vota-loading-screen");
+      const progressText = document.getElementById("vota-progress-text");
+      try {
+        updateProgress("Carregando urna de Lealand...");
+        if (loadingScreen) loadingScreen.style.display = "flex";
+        window.votaWasmAssetVersion = await votaWasmReadAssetVersion();
+        updateProgress("Carregando módulo da urna...");
+        await votaWasmLoadScript(votaWasmVersionedUrl("../wasm/vota_web_wasm.js"));
+      } catch (error) {
+        const status = document.getElementById("vota-status");
+        if (status) {
+          status.textContent = "Falha ao carregar a urna.";
+        }
+        console.error(error);
+        updateProgress("Falha ao carregar a urna.");
+      }
+      mostrarColinhaFinal();
+    });
+
+    window.addEventListener("resize", function() {
+      votaWasmApplyScale();
+    });
+  </script>
+  <style>
+    #vota-loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(233, 239, 230, 0.97);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 9999;
+    }
+    .vota-spinner {
+      border: 4px solid #dfe7dc;
+      border-top: 4px solid #2e7d32;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .vota-loading-text {
+      font-size: 18px;
+      color: #1d4620;
+      font-family: Arial, sans-serif;
+    }
+    #vota-progress-text, #vota-waiting-text {
+      font-size: 14px;
+      color: #4a5548;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="home-body">
+  <div id="vota-loading-screen">
+    <div class="vota-spinner"></div>
+    <p class="vota-loading-text">Carregando urna de Lealand...</p>
+    <div id="vota-progress-text"></div>
+    <p id="vota-waiting-text">Por favor, aguarde.</p>
+  </div>
+  <header>
+    <div class="brand-row"><a href="../index.html" id="vota-change-scenario">Início</a></div>
+  </header>
+
+  <nav class="progress-navigation" data-current-step="2" data-root="../" aria-label="Etapas da votação"></nav>
+
+  <div class="simulation-layout">
+    <details id="colinhaFinal" class="colinha" hidden open>
+      <summary class="colinha-summary">
+        <span>Colinha de Lealand</span>
+        <span id="colinhaProgresso" class="colinha-progress">0/0</span>
+      </summary>
+      <p id="colinhaStatus" class="visually-hidden" aria-live="polite"></p>
+      <div id="colinhaConteudo" class="colinha-content"></div>
+    </details>
+    <div class="app-viewport">
+      <main class="app">
+        <section class="stage" aria-label="Urna eletrônica de Lealand">
+          <div id="urna-sessao" class="urna-sessao-linha" role="status">Sessão —</div>
+          <section class="urna-shell" aria-label="Terminal do eleitor">
+            <canvas id="uenux-screen" width="1280" height="800"></canvas>
+            <!-- Marcador não-visual p/ Module.uenuxExternalKeyboard (ver acima). -->
+            <span data-vota-key="noop" hidden aria-hidden="true"></span>
+            <div class="sel-hw-badge" aria-hidden="true">
+              <img src="../shared/brand/brand-coat.png" alt="">
+              <span>Supremo Eleitoral<br>Urna de Lealand</span>
+            </div>
+          </section>
+
+          <div class="urna-teclas" aria-label="Teclas do computador para votar">
+            <div><kbd>0–9</kbd><span>digitar número</span></div>
+            <div><kbd>Enter</kbd><span>CONFIRMA</span></div>
+            <div><kbd>⌫</kbd><span>CORRIGE</span></div>
+            <div><kbd>Espaço</kbd><span>BRANCO</span></div>
+          </div>
+
+          <section class="ballot-strip" aria-label="Guia contextual da votação">
+            <div id="vota-candidates-title" class="ballot-title">Guia da votação</div>
+            <div id="vota-guide-cards" class="guide-cards"></div>
+            <section id="vota-candidate-section" class="candidate-section" aria-label="Candidaturas disponíveis" hidden>
+              <div id="vota-candidate-list-title" class="candidate-list-title">Candidaturas disponíveis</div>
+              <div id="vota-candidates" class="candidates"></div>
+            </section>
+          </section>
+
+          <details class="help">
+            <summary>Ajuda — como votar sem o teclado da urna</summary>
+            <p>Esta urna usa o <strong>teclado físico do computador</strong>:
+              <strong>91</strong> (Tibúrcio Lemos), <strong>92</strong> (Dagoberto Sales),
+              <strong>93</strong> (Quitéria Vasconcellos). <strong>Enter</strong> = CONFIRMA,
+              <strong>Backspace</strong> = CORRIGE, <strong>Espaço</strong> = BRANCO.</p>
+            <p>Confira nome, número, partido e vice na tela antes de confirmar.</p>
+            <p>Para votar em branco, tecle Espaço e depois Enter. Para nulo, digite um
+              número inexistente (ex.: 99) e confirme com Enter.</p>
+            <p>Eleição do Supremo Eleitoral de Lealand (SEL) — cargo único de Gerente.</p>
+          </details>
+
+          <details class="help" id="colinhaConfig">
+            <summary>Colinha auxiliar (não altera a eleição)</summary>
+            <div class="sel-colinha-rows">
+              <label> Tibúrcio Lemos
+                <input id="colinha-num-0" inputmode="numeric" maxlength="2" value="91">
+              </label>
+              <label> Dagoberto Sales
+                <input id="colinha-num-1" inputmode="numeric" maxlength="2" value="92">
+              </label>
+              <label> Quitéria Vasconcellos
+                <input id="colinha-num-2" inputmode="numeric" maxlength="2" value="93">
+              </label>
+            </div>
+            <div class="sel-colinha-actions">
+              <button id="sel-colinha-save" class="sel-start sel-start-small" type="button">Salvar colinha</button>
+              <span id="sel-colinha-msg" role="status"></span>
+            </div>
+          </details>
+        </section>
+
+        <aside class="guide" aria-label="Guia da votação">
+          <section class="panel">
+            <h1>Urna de Lealand</h1>
+            <div class="status">
+              <div id="vota-status">Carregando urna...</div>
+              <div id="vota-state">Guia: aguardando</div>
+            </div>
+            <details class="diagnostics">
+              <summary>Diagnóstico técnico</summary>
+              <div id="vota-technical-state">Estado: aguardando</div>
+              <pre id="mt" aria-hidden="true"></pre>
+            </details>
+          </section>
+          <section class="panel">
+            <h2>Cargo atual</h2>
+            <div id="vota-cargo">Aguardando início da votação</div>
+          </section>
+          <section class="panel">
+            <h2>Eleição</h2>
+            <div id="vota-scenario">Eleição de Lealand — Gerente</div>
+          </section>
+        </aside>
+      </main>
+    </div>
+  </div>
+
+  <footer class="sel-footer">
+    <img src="../shared/brand/brand-flag.png" alt="Bandeira de Lealand">
+    <span>Supremo Eleitoral de Lealand (SEL) — Urna de Lealand. Cargo único: Gerente.
+      <a href="../sessoes/index.html">Sessões</a> · <a href="../apuracao/index.html">Apuração</a>.</span>
+  </footer>
+  <script src="../shared/js/sel-navigation.js?v=sel-2" defer></script>
+  <script type="module" src="urna.js?v=sel-urna-1"></script>
+</body>
+</html>
