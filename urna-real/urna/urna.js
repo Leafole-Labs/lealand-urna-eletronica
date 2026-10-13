@@ -138,6 +138,9 @@ let votoConcluidoNestaCarga = false;
 let votoEnviadoNaoEncerrado = false;
 let outbox = [];
 let estadoMotorPronto = false;
+// FIM visível por 7,5 s: o canvas só é desmontado quando este timer dispara.
+let timerPosFim = null;
+const ESPERA_POS_FIM_MS = 7500;
 
 function banner(texto) {
   const el = document.getElementById('urna-real-sessao');
@@ -322,16 +325,22 @@ function aplicarStatus(st) {
     // a página. O motor estaciona em CAguardaMensagem/done após o FIM, então
     // é re-inicializado pela API pública (votaInit) antes de liberar o
     // próximo eleitor. Aguarda o mesário autorizar antes de aceitar entradas.
+    // O canvas (FIM) permanece visível por ESPERA_POS_FIM_MS e só então o
+    // motor é reiniciado (o que desmonta o quadro).
     votoEnviadoNaoEncerrado = false;
     window.__urnaRealVotando = false;
     bufferDigitos = '';
     confirmacaoPendente = false;
     retratoConfirmacao = null;
-    reiniciarMotor().then(() => {
-      enviar({ type: 'voter_ready' });
-    }).catch((e) => {
-      banner('Falha ao reiniciar o motor para o próximo eleitor: ' + ((e && e.message) || e));
-    });
+    if (timerPosFim) clearTimeout(timerPosFim);
+    timerPosFim = setTimeout(() => {
+      timerPosFim = null;
+      reiniciarMotor().then(() => {
+        enviar({ type: 'voter_ready' });
+      }).catch((e) => {
+        banner('Falha ao reiniciar o motor para o próximo eleitor: ' + ((e && e.message) || e));
+      });
+    }, ESPERA_POS_FIM_MS);
     return;
   }
   if (estadoServidor === 'VOTER_AUTHORIZED' || estadoServidor === 'VOTING') {
@@ -520,7 +529,7 @@ async function autoteste() {
     const cen = (man.scenarios || []).find((s) => s.id === 'lealand-oficial');
     if (!cen) throw new Error('cenário lealand-oficial ausente');
     const meta = await (await fetch(`../wasm/bases/${cen.dataJs}`, { cache: 'no-store' })).text();
-    const m = /"remote_package_size":(\d+)/.exec(meta);
+    const m = /"remote_package_size":\s*(\d+)/.exec(meta);
     checks.push({ id: 'dataset-manifest', ok: true, detail: cen.id });
     checks.push({ id: 'dataset-size', ok: !!m, detail: m ? `${m[1]} bytes declarados` : 'tamanho ausente' });
   } catch (e) {
