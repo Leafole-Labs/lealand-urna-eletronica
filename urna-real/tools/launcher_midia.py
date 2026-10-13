@@ -122,6 +122,11 @@ class App(tk.Tk):
         r += 1
         r = campo(f, "timestamp", "Timestamp AAAAMMDDHHMM", "202609101622", 20, r)
         r = campo(f, "pids", "PIDs internos", "t02421ac-ce,t02421ac00001-ca", 60, r)
+        self.sync_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(f, text="Sincronizar CANDIDATES no servidor (exige reiniciar o node)",
+                        variable=self.sync_var).grid(row=r, column=0, columnspan=3,
+                                                     sticky="w", padx=6, pady=2)
+        r += 1
 
         bar = ttk.Frame(f)
         bar.grid(row=r, column=0, columnspan=3, pady=10)
@@ -468,6 +473,9 @@ class App(tk.Tk):
             argv += ["--candidatos", cfg_path]
         if mapa_fotos:
             argv += ["--fotos", str(mapa_fotos)]
+        sincronizar = bool(self.sync_var.get() and cfg_path)
+        if not sincronizar:
+            argv += ["--no-sync-config"]
         try:
             self.msg("$ gerar_midia.py " + " ".join(argv))
             rc = G.main(argv)
@@ -482,7 +490,11 @@ class App(tk.Tk):
                 Path(cfg_path).unlink(missing_ok=True)
         self.msg(f"concluido (rc={rc}).")
         if rc == 0:
-            messagebox.showinfo("Gerar", "Midia gerada com sucesso.")
+            if sincronizar:
+                messagebox.showinfo("Gerar", "Midia gerada e CANDIDATES sincronizado.\n"
+                                             "Reinicie o servidor (node server/server.mjs) para valer.")
+            else:
+                messagebox.showinfo("Gerar", "Midia gerada com sucesso.")
 
 
 if __name__ == "__main__":

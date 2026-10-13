@@ -207,7 +207,8 @@ def reempacotar(arquivos: dict[str, bytes], ordem: list[str],
     # builder original: o autoteste em urna.js extrai remote_package_size via regex.
     payload = json.dumps({"data": out_data.name, "remote_package_size": len(blob), "files": indice},
                          separators=(",", ":"))
-    out_js.write_text(head_loader + "  carregarPacote(" + payload + ");\n})();\n", encoding="utf-8")
+    # LF explicito (repo em LF; write_text no Windows geraria CRLF).
+    out_js.write_bytes((head_loader + "  carregarPacote(" + payload + ");\n})();\n").encode("utf-8"))
     return {"data": out_data.name, "remote_package_size": len(blob), "files": indice}
 
 
@@ -648,6 +649,54 @@ def carregar_fotos(arquivos: dict[str, bytes], eleicao_path: str,
     return fotos
 
 
+def _js_str(s: str) -> str:
+    return "'" + str(s or "").replace("\\", "\\\\").replace("'", "\\'") + "'"
+
+
+def render_candidates_js(parties: list[dict], candidacies: list[dict]) -> str:
+    """Bloco `export const CANDIDATES` para shared/sel-election-config.js."""
+    por_num = {p["number"]: p for p in parties}
+    linhas = ["export const CANDIDATES = ["]
+    for c in sorted(candidacies, key=lambda x: x["number"]):
+        p = por_num.get(c["party"], {"number": c["party"], "sigla": "", "nome": ""})
+        vice = (c.get("suplentes") or [{}])[0]
+        linhas.append("  {")
+        linhas.append(f"    numero: '{c['number']}',")
+        linhas.append(f"    partido: {{ numero: {p['number']}, "
+                     f"sigla: {_js_str(p['sigla'])}, nome: {_js_str(p['nome'])} }},")
+        linhas.append(f"    titular: {{ nome: {_js_str(c['titular']['nome'])}, "
+                     f"nomeUrna: {_js_str(c['titular']['nomeUrna'])} }},")
+        linhas.append(f"    vice: {{ nome: {_js_str(vice.get('nome', ''))}, "
+                     f"nomeUrna: {_js_str(vice.get('nomeUrna', ''))} }},")
+        linhas.append("  },")
+    linhas.append("];")
+    return "\n".join(linhas) + "\n"
+
+
+def sync_config(config_path: str | Path, parties: list[dict], candidacies: list[dict]) -> Path:
+    """Reescreve o rol CANDIDATES no sel-election-config.js (backup .bak na 1ª vez).
+
+    O servidor valida cada voto contra esse rol; sem sincronizar, votar num
+    numero novo falha com 'candidatura desconhecida'. Exige reiniciar o servidor.
+    """
+    p = Path(config_path)
+    raw = p.read_bytes()
+    nl = "\r\n" if b"\r\n" in raw else "\n"
+    texto = raw.decode("utf-8").replace("\r\n", "\n")
+    pat = r"export const CANDIDATES = \[.*?\];"
+    if not re.search(pat, texto, re.S):
+        raise ValueError("bloco CANDIDATES nao encontrado em " + str(p))
+    bak = p.with_suffix(".js.bak")
+    if not bak.exists():
+        bak.write_bytes(raw)  # backup byte-identico
+    bloco = render_candidates_js(parties, candidacies).strip()
+    novo = re.sub(pat, lambda _m: bloco, texto, count=1, flags=re.S)
+    if not novo.endswith("\n"):
+        novo += "\n"
+    p.write_bytes(novo.replace("\n", nl).encode("utf-8"))
+    return p
+
+
 def carregar_fotos_extras(mapa_path: str | None = None,
                           fotos_dir: str | None = None) -> dict[str, bytes]:
     """Carrega JPEGs extras: JSON {codigo: caminho} e/ou diretorio <codigo>.jpg."""
@@ -712,6 +761,10 @@ def main(argv: list[str] | None = None) -> int:
                     help="extrai as fotos do molde para o diretorio indicado e sai (sem gerar midia)")
     ap.add_argument("--pids", default="t02421ac-ce,t02421ac00001-ca",
                     help="bases internas (sem .pid) para gerar os o*.pid externos, separadas por virgula")
+    ap.add_argument("--sync-config", default=str(RAIZ / "shared" / "sel-election-config.js"),
+                    help="sincroniza o rol CANDIDATES no servidor (padrao: shared/sel-election-config.js)")
+    ap.add_argument("--no-sync-config", dest="sync_config", action="store_const", const=None,
+                    help="nao toca no sel-election-config.js")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)
 
@@ -758,6 +811,11 @@ def main(argv: list[str] | None = None) -> int:
         arquivos = escrever_eleicoes(arquivos, eleicoes, fotos)
         print("candidaturas atualizadas:", [(c["number"], c["titular"]["nomeUrna"])
                                             for c in alvo["offices"][0]["candidacies"]])
+        if args.sync_config:
+            sync_config(args.sync_config, alvo["parties"], alvo["offices"][0]["candidacies"])
+            print(f"config sincronizado: {args.sync_config} "
+                  f"({len(alvo['offices'][0]['candidacies'])} candidaturas). "
+                  f"Reinicie o servidor para valer.")
 
     # ---- fase of/te ----
     arquivos = forcar_fase(arquivos, args.fase)
@@ -827,8 +885,7 @@ def main(argv: list[str] | None = None) -> int:
         (out_dir / nome).write_bytes(blob)
     manifest = {"version": 1, "generatedAt": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
                 "scenarios": [cenario]}
-    (out_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2),
-                                           encoding="utf-8")
+    (out_dir / "manifest.json").write_bytes((json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
     print(f"OK: {data_nome} ({meta_nova['remote_package_size']} bytes, "
           f"{len(meta_nova['files'])} arquivos) + {len(pids_ext)} .pid + manifest.json em {out_dir}")
     return 0
